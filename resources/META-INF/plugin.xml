@@ -1,18 +1,18 @@
 <idea-plugin>
-  <id>com.your.company.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>com.johan.init.view</id>
+  <name>InitView</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="2428376429@qq.com" url="">冯奕欢</vendor>
 
-  <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
-    ]]></description>
+  <description>
+    1.自动创建view属性，声明字段
+    2.自动初始化view，也就是findViewById
+    3.自动创建在布局文件设置的onClick方法，也就是android:onClick
+    4.自动创建onClick方法，包括switch和各个view id的case
+  </description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
-    ]]>
+  <change-notes>
+    第一个版本
   </change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->

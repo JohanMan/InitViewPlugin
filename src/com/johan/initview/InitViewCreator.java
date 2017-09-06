@@ -107,6 +107,16 @@ public class InitViewCreator extends WriteCommandAction.Simple {
         methodBuilder.append("}");
         // 写入方法
         psiClass.add(factory.createMethodFromText(methodBuilder.toString(), psiClass));
+        // initView方法生成后，在onCreate方法内写入initView();语句
+        PsiMethod onCreateMethod = getMethod("onCreate");
+        if (onCreateMethod != null) {
+            // 判断是否已经写入了
+            if (containTextInMethod(onCreateMethod, "initView")) {
+                return;
+            }
+            // 写入initView语句
+            onCreateMethod.getBody().add(factory.createStatementFromText("initView();", psiClass));
+        }
     }
 
     /**

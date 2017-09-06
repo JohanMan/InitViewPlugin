@@ -54,8 +54,12 @@ public class Element {
         }
         StringBuilder fieldNameBuilder = new StringBuilder();
         String[] ids = id.split("_");
-        for (int i = 0; i < ids.length; i++) {
-            if (i == 0) {
+        int startIndex = 0;
+        if (ids.length > 1) {
+            startIndex = 1;
+        }
+        for (int i = startIndex; i < ids.length; i++) {
+            if (i == startIndex) {
                 fieldNameBuilder.append(ids[i]);
             } else {
                 fieldNameBuilder.append(toFirstUpper(ids[i]));

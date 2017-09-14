@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.johan.init.view</id>
   <name>InitView</name>
-  <version>1.1</version>
+  <version>1.4</version>
   <vendor email="2428376429@qq.com" url="">冯奕欢</vendor>
 
   <description>
@@ -15,7 +15,7 @@
 
   <change-notes>
     <![CDATA[
-      第一个版本
+      第四个版本
     ]]>
   </change-notes>
 

@@ -2,6 +2,8 @@ package com.johan.initview;
 
 public class Element {
 
+    // view prefix
+    private String prefix;
     // view id
     private String id;
     // view name 如TextView
@@ -11,7 +13,7 @@ public class Element {
     // on click function
     private String onClick;
 
-    public Element(String name, String id, boolean clickable, String onClick) {
+    public Element(String prefix, String name, String id, boolean clickable, String onClick) {
         String[] packages = name.split("\\.");
         if (packages.length > 1) {
             // com.example.CustomView
@@ -19,6 +21,7 @@ public class Element {
         } else {
             this.name = name;
         }
+        this.prefix = prefix + "_";
         this.id = id;
         this.clickable = clickable;
         this.onClick = onClick;
@@ -37,6 +40,22 @@ public class Element {
     }
 
     /**
+     * 是否是有效的id
+     * @return
+     */
+    public boolean isValidId() {
+        return id != null && !"".equals(id);
+    }
+
+    /**
+     * 是否是按钮
+     * @return
+     */
+    public boolean isButton() {
+        return name.endsWith("Button");
+    }
+
+    /**
      * 获取id，R.id.id
      * @return
      */
@@ -49,17 +68,14 @@ public class Element {
      * @return
      */
     public String getFieldName() {
-        if (id.indexOf("_") == -1) {
-            return id + getFieldNameSuffix();
+        String realId = id.replace(prefix, "");
+        if (realId.indexOf("_") == -1) {
+            return realId + getFieldNameSuffix();
         }
         StringBuilder fieldNameBuilder = new StringBuilder();
-        String[] ids = id.split("_");
-        int startIndex = 0;
-        if (ids.length > 1) {
-            startIndex = 1;
-        }
-        for (int i = startIndex; i < ids.length; i++) {
-            if (i == startIndex) {
+        String[] ids = realId.split("_");
+        for (int i = 0; i < ids.length; i++) {
+            if (i == 0) {
                 fieldNameBuilder.append(ids[i]);
             } else {
                 fieldNameBuilder.append(toFirstUpper(ids[i]));

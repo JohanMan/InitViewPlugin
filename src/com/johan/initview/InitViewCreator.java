@@ -45,7 +45,9 @@ public class InitViewCreator extends WriteCommandAction.Simple {
      */
     private void buildViewField() {
         for (Element element : elementList) {
-            if (element.getOnClick() != null) continue;
+            // 如果不是有效的id
+            if (!element.isValidId()) continue;
+            // 如果已经有了这个字段
             if (hasField(element.getFieldName())) continue;
             String field = "private " + element.getName() + " " + element.getFieldName() + ";";
             // 写入字段
@@ -77,15 +79,19 @@ public class InitViewCreator extends WriteCommandAction.Simple {
         // 如果initView方法已经存在
         if (psiMethod != null) {
             for (Element element : elementList) {
-                if (element.getOnClick() != null) continue;
+                // 如果不是有效的id
+                if (!element.isValidId()) continue;
                 // 写入初始化view
                 String insertCode = element.getFieldName() + " = (" + element.getName() + ")" + " findViewById(" + element.getFullId() + ");";
                 if (!containTextInMethod(psiMethod, insertCode)) {
                     // 在方法内写入insertCode语句
                     psiMethod.getBody().add(factory.createStatementFromText(insertCode, psiClass));
                 }
-                // 如果设置clickable，写入setOnClickListener
-                if (!element.isClickable()) continue;
+                // // 如果不是按钮，也没有标志clickable
+                if (!element.isButton() || !element.isClickable()) continue;
+                //  如果标志onClick
+                if (element.getOnClick() != null) continue;
+                // 添加
                 insertCode = element.getFieldName() + ".setOnClickListener(this);";
                 if (!containTextInMethod(psiMethod, insertCode)) {
                     // 在方法内写入insertCode语句
@@ -98,10 +104,15 @@ public class InitViewCreator extends WriteCommandAction.Simple {
         StringBuilder methodBuilder = new StringBuilder();
         methodBuilder.append("private void initView() {").append("\n");
         for (Element element : elementList) {
-            if (element.getOnClick() != null) continue;
+            // 如果不是有效的id
+            if (!element.isValidId()) continue;
             methodBuilder.append(element.getFieldName()).append(" = ").append("(").append(element.getName()).append(")")
                     .append(" findViewById(").append(element.getFullId()).append(");").append("\n");
-            if (!element.isClickable()) continue;
+            // 如果不是按钮，也没有标志clickable
+            if (!element.isButton() || !element.isClickable()) continue;
+            // 如果标志onClick
+            if (element.getOnClick() != null) continue;
+            // 添加
             methodBuilder.append(element.getFieldName()).append(".setOnClickListener(this);\n");
         }
         methodBuilder.append("}");
@@ -176,7 +187,7 @@ public class InitViewCreator extends WriteCommandAction.Simple {
             for (Element element : elementList) {
                 if (element.getOnClick() != null) continue;
                 // 如果同时设置onClick和clickable，clickable不起作用
-                if (!element.isClickable()) continue;
+                if (!element.isButton() || !element.isClickable()) continue;
                 String insertCode = "case " + element.getFullId() + ":";
                 if (containTextInMethod(psiMethod, insertCode)) continue;
                 // 找到第一个switch块
@@ -200,11 +211,11 @@ public class InitViewCreator extends WriteCommandAction.Simple {
         boolean hasClickable = false;
         for (Element element : elementList) {
             if (element.getOnClick() != null) continue;
-            if (!element.isClickable()) continue;
+            if (!element.isButton() || !element.isClickable()) continue;
             hasClickable = true;
             methodBuilder.append("case ").append(element.getFullId()).append(":\nbreak;\n");
         }
-        methodBuilder.append("}");
+        methodBuilder.append("}\n}");
         // 判断是否设置了点击事件(clickable)
         if (hasClickable) {
             //写入方法

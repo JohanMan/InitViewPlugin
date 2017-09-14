@@ -50,6 +50,16 @@ public class Utils {
      * @param elementList
      */
     public static void parseXmlLayout(final PsiFile xmlLayoutFile, final List<Element> elementList) {
+        String fileName = xmlLayoutFile.getName();
+        int index = fileName.indexOf("_");
+        if (index != -1) {
+            fileName = fileName.substring(index + 1);
+        }
+        index = fileName.indexOf(".");
+        if (index != -1) {
+            fileName = fileName.substring(0, index);
+        }
+        final String prefix = fileName;
         xmlLayoutFile.accept(new XmlRecursiveElementVisitor(){
             @Override
             public void visitElement(PsiElement element) {
@@ -57,8 +67,8 @@ public class Utils {
                 if (element instanceof XmlTag) {
                     XmlTag tag = (XmlTag) element;
                     String name = tag.getName();
-                    // 如果是include标签
-                    if (name.equalsIgnoreCase("include")) {
+                    // 如果是include标签，暂时不要找include标签
+                    /* if (name.equalsIgnoreCase("include")) {
                         XmlAttribute layoutAttr = tag.getAttribute("layout", null);
                         if (layoutAttr == null) return;
                         String layout = getLayoutName(layoutAttr.getValue());
@@ -71,17 +81,18 @@ public class Utils {
                         // 递归查找
                         parseXmlLayout(layoutFile, elementList);
                         return;
-                    }
+                    } */
                     // 如果不是include，那么就是view标签
+                    String id = "";
                     XmlAttribute idAttr = tag.getAttribute("android:id", null);
-                    if (idAttr == null) return;
-                    String id = getViewId(idAttr.getValue());
-                    if (id == null) return;
+                    if (idAttr != null) {
+                        id = getViewId(idAttr.getValue());
+                    }
                     XmlAttribute clickableAttr = tag.getAttribute("android:clickable", null);
                     boolean clickable = clickableAttr == null ? false : clickableAttr.getValue().equals("false") ? false : true;
                     XmlAttribute onClickAttr = tag.getAttribute("android:onClick", null);
                     String onClick = onClickAttr== null ? null : onClickAttr.getValue();
-                    Element parseResultElement = new Element(name, id, clickable, onClick);
+                    Element parseResultElement = new Element(prefix, name, id, clickable, onClick);
                     elementList.add(parseResultElement);
                 }
             }
